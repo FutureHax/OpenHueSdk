@@ -211,7 +211,11 @@ public class BridgeRegistrar {
 
 				if (finished) {
 					countDownTimer.cancel();
-					diag.dismiss();
+					try {
+						diag.dismiss();
+					} catch (IllegalArgumentException e) {
+						
+					}
 					listener.bridgeReady();
 				} else {
 					BridgeRegisterTask task = new BridgeRegisterTask(b,

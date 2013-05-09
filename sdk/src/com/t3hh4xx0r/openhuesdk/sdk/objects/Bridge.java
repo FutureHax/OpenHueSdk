@@ -1,13 +1,19 @@
 package com.t3hh4xx0r.openhuesdk.sdk.objects;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.os.AsyncTask;
 
+import com.google.gson.Gson;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
-import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager;
-import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager.onLightScanCompledListener;
+import com.t3hh4xx0r.openhuesdk.sdk.Utils;
 
 public class Bridge implements Serializable {
 	private static final long serialVersionUID = 8274809280967198013L;
@@ -66,19 +72,57 @@ public class Bridge implements Serializable {
 
 	public void isBridgeStillValid(Activity a,
 			final bridgeValidityListener listener) {
-		PreferencesManager pMan = new PreferencesManager(a);
-		BulbManager lMan = new BulbManager(a, pMan.getBridge());
-		lMan.getLights(pMan.getBridge(), new onLightScanCompledListener() {
-			@Override
-			public void onLightsScanCompletedSuccessfully(
-					ArrayList<Bulb> bulbList) {
-				listener.onBrigeReturnedValid(Bridge.this);
-			}
-
-			@Override
-			public void onLightsScanCompletedUnsuccessfully(final String error) {
-				listener.onBrigeReturnedInvalid(Bridge.this);
-			}
-		});
+		BridgeValidityTesterTask t = new BridgeValidityTesterTask(this, a, listener);
+		t.execute();
 	}
+	
+	private class BridgeValidityTesterTask extends AsyncTask<Void, Void, Boolean> {
+		Bridge b;
+		Context c;
+		PreferencesManager pMan;
+		bridgeValidityListener listener;
+		
+		private BridgeValidityTesterTask(Bridge b, Context c, bridgeValidityListener listener) {
+			this.b = b;
+			this.c = c;
+			pMan = new PreferencesManager(c);
+			this.listener = listener;
+		}
+
+		@Override
+		protected Boolean doInBackground(Void... arg0) {
+			String content = "not pressed";
+			try {
+				DefaultHttpClient localDefaultHttpClient = new DefaultHttpClient();
+				HttpPost localHttpPost = new HttpPost("http://"
+						+ b.getInternalipaddress() + "/api/");
+				Gson localGson = new Gson();
+				RegistrationRequest localRegistrationRequest = new RegistrationRequest(
+						Utils.getDeviceType(c).getType(), pMan.getUserName());
+
+				localHttpPost.setEntity(new StringEntity(localGson
+						.toJson(localRegistrationRequest)));
+				localHttpPost.setHeader("Accept", "application/json");
+				localHttpPost.setHeader("Content-type", "application/json");
+				content = EntityUtils.toString(localDefaultHttpClient
+						.execute(localHttpPost).getEntity());
+
+			} catch (Exception e) {
+				
+			}
+			return !content.contains("not pressed");
+		}
+
+		@Override
+		protected void onPostExecute(Boolean result) {
+			super.onPostExecute(result);
+			if (result) {
+				listener.onBrigeReturnedValid(b);
+			} else {
+				listener.onBrigeReturnedInvalid(b);
+			}
+		}
+
+	}
+
 }
