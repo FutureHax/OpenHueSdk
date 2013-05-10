@@ -10,10 +10,12 @@ import org.apache.http.util.EntityUtils;
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar.OnBridgeReturnedListener;
 
 public class Bridge implements Serializable {
 	private static final long serialVersionUID = 8274809280967198013L;
@@ -106,6 +108,7 @@ public class Bridge implements Serializable {
 				localHttpPost.setHeader("Content-type", "application/json");
 				content = EntityUtils.toString(localDefaultHttpClient
 						.execute(localHttpPost).getEntity());
+				Log.d("CONTENT FROM VALIDATION!", content + "");
 
 			} catch (Exception e) {
 				
@@ -116,6 +119,7 @@ public class Bridge implements Serializable {
 		@Override
 		protected void onPostExecute(Boolean result) {
 			super.onPostExecute(result);
+			Log.d("RESULT FROM VALIDATION!", result + "");
 			if (result) {
 				listener.onBrigeReturnedValid(b);
 			} else {

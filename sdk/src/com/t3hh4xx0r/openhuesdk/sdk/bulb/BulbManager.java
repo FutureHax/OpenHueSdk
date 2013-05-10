@@ -274,11 +274,11 @@ public class BulbManager {
 		public void onBulbRenamedUnsuccessfully();
 	}
 
-	Activity act;
+	Context act;
 	Bridge bridge;
 	PreferencesManager pMan;
 	
-	public BulbManager(Activity act, Bridge bridge) {
+	public BulbManager(Context act, Bridge bridge) {
 		this.act = act;
 		this.bridge = bridge;
 		pMan = new PreferencesManager(act);
