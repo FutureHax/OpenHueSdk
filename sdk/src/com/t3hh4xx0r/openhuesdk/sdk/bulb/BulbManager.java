@@ -18,7 +18,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -215,7 +214,7 @@ public class BulbManager {
 		@Override
 		protected Void doInBackground(Void... arg0) {
 			try {
-				HttpClient client = new DefaultHttpClient();
+				HttpClient client = new DefaultHttpClient();				
 				String getURL = "http://" + b.getInternalipaddress() + "/api/"
 						+ userName + "/lights";
 				HttpGet get = new HttpGet(getURL);
@@ -278,19 +277,23 @@ public class BulbManager {
 	Bridge bridge;
 	PreferencesManager pMan;
 	
+	public Bridge getBridge() {
+		return bridge;
+	}
+
 	public BulbManager(Context act, Bridge bridge) {
 		this.act = act;
 		this.bridge = bridge;
 		pMan = new PreferencesManager(act);
 	}
 
-	public void getLights(Bridge b, onLightScanCompledListener listener) {
+	public void getLights(onLightScanCompledListener listener) {
 		final ProgressDialog progress_dialog = new ProgressDialog(act);
 		progress_dialog.setIndeterminate(true);
 		progress_dialog.setMessage("Scanning for bulbs...");
 		progress_dialog.setCancelable(false);
 		progress_dialog.show();
-		GetLightsListTask task = new GetLightsListTask(b,
+		GetLightsListTask task = new GetLightsListTask(bridge,
 				new PreferencesManager(act).getUserName(), listener,
 				progress_dialog);
 		task.execute();

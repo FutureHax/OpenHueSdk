@@ -35,6 +35,12 @@ public class Bridge implements Serializable {
 	public Bridge() {
 	}
 
+	public boolean isPlaceHolder() {
+		return (getId().equals("") ||
+				getInternalipaddress().equals("") ||
+				getMacaddress().equals(""));
+	}
+	
 	public Bridge(String id, String internalipaddress, String macaddress) {
 		this.id = id;
 		this.internalipaddress = internalipaddress;
@@ -72,7 +78,7 @@ public class Bridge implements Serializable {
 				+ ", getMacaddress()=" + getMacaddress() + "]";
 	}
 
-	public void isBridgeStillValid(Activity a,
+	private void isBridgeStillValid(Activity a,
 			final bridgeValidityListener listener) {
 		BridgeValidityTesterTask t = new BridgeValidityTesterTask(this, a, listener);
 		t.execute();

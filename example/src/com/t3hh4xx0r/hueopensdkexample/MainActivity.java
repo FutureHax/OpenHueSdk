@@ -61,8 +61,7 @@ public class MainActivity extends SherlockActivity {
 			public void onClick(View v) {
 				BulbManager lMan = new BulbManager(MainActivity.this, pMan
 						.getBridge());
-				lMan.getLights(pMan.getBridge(),
-						new onLightScanCompledListener() {
+				lMan.getLights(new onLightScanCompledListener() {
 							@Override
 							public void onLightsScanCompletedSuccessfully(
 									ArrayList<Bulb> bulbList) {
@@ -125,36 +124,36 @@ public class MainActivity extends SherlockActivity {
 	}
 
 	private void setVisibilities() {
-		if (pMan.getBridge() == null || pMan.getBridge().getId().equals("")) {
+		if (pMan.getBridge().isPlaceHolder()) {
 			findLights.setVisibility(View.GONE);
 			manageLights.setVisibility(View.GONE);
-		} else if (pMan.getBridge() != null
-				&& !pMan.getBridge().getId().equals(""))
-			pMan.getBridge().isBridgeStillValid(this,
-					new bridgeValidityListener() {
-						@Override
-						public void onBrigeReturnedValid(Bridge b) {
-							if (pMan.getBulbs().isEmpty()) {
-								MainActivity.this.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										manageLights.setVisibility(View.GONE);									
-									}
-								});	
-							}
-						}
-
-						@Override
-						public void onBrigeReturnedInvalid(Bridge b) {
-							MainActivity.this.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									findLights.setVisibility(View.GONE);
-									manageLights.setVisibility(View.GONE);									
-								}
-							});							
-						}
-					});
+		} else {
+			manageLights.setVisibility(View.GONE);									
+		}
+//			pMan.getBridge().isBridgeStillValid(this,
+//					new bridgeValidityListener() {
+//						@Override
+//						public void onBrigeReturnedValid(Bridge b) {
+//							if (pMan.getBulbs().isEmpty()) {
+//								MainActivity.this.runOnUiThread(new Runnable() {
+//									@Override
+//									public void run() {
+//									}
+//								});	
+//							}
+//						}
+//
+//						@Override
+//						public void onBrigeReturnedInvalid(Bridge b) {
+//							MainActivity.this.runOnUiThread(new Runnable() {
+//								@Override
+//								public void run() {
+//									findLights.setVisibility(View.GONE);
+//									manageLights.setVisibility(View.GONE);									
+//								}
+//							});							
+//						}
+//					});
 	}
 
 }
