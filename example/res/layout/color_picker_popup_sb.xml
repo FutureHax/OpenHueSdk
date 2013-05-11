@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="25dp" >
 
-    <com.t3hh4xx0r.hueopensdkexample.sdk.ColorPickerView
+    <com.t3hh4xx0r.openhuesdk.sdk.ColorPickerView
         android:id="@+id/picker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

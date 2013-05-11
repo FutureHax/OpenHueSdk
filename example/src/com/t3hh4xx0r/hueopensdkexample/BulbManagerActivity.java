@@ -186,7 +186,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 				public void onClick(final View v) {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(
 							v.getContext());
-					bulbMan.alert(b, BulbManager.lSELECT);
+					bulbMan.alert(b, BulbManager.AlertCodes.lSELECT);
 					builder.setCancelable(true);
 					builder.setTitle("Rename " + b.getName());
 					builder.setMessage("Enter a new name below.");
@@ -236,7 +236,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 													
 												}
 											});
-									bulbMan.alert(b, BulbManager.NONE);
+									bulbMan.alert(b, BulbManager.AlertCodes.NONE);
 									d.dismiss();
 								}
 							});
@@ -245,7 +245,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 				}
 			});
 
-			bulbMan.alert(b, BulbManager.SELECT);
+			bulbMan.alert(b, BulbManager.AlertCodes.SELECT);
 			return rootView;
 		}
 	}

@@ -23,78 +23,69 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bulb;
+import com.t3hh4xx0r.openhuesdk.sdk.objects.BulbState;
 
 public class BulbManager {
-	//	Alert Status Codes
-	public static final String NONE = "none";
-	public static final String SELECT = "select";
-	public static final String lSELECT = "lselect";
+	public class AlertCodes {
+		public static final String NONE = "none";
+		public static final String SELECT = "select";
+		public static final String lSELECT = "lselect";
+	}
 	
-	public class BulbColorChangerTask extends AsyncTask<Void, Void, Void> {
-		Context c;
-		Bulb b;
-		int color = 999999999;
-		int finalSat = 420;
-		int finalBright = 420;
-
-		public BulbColorChangerTask(Context c, Bulb b, int color, int finalSat,
-				int finalBright) {
-			this.color = color;
-			this.c = c;
-			this.b = b;
-			this.finalBright = finalBright;
-			this.finalSat = finalSat;
+	public class StateCodes {
+		public static final String BRIGHTNESS = "bri";
+		public static final String COLOR = "hue";
+		public static final String SATURATION = "color";
+	}
+	
+	private class BulbStateFetcherTask extends AsyncTask<Void, Void, Bridge> {
+		Bulb bulb;
+		String userName;
+		onBulbStateFetched listener;
+		
+		private BulbStateFetcherTask(Bulb b, String userName, onBulbStateFetched listener) {
+			this.bulb = b;
+			this. userName = userName;
+			this.listener = listener;
 		}
 
 		@Override
-		protected Void doInBackground(Void... arg0) {
+		protected Bridge doInBackground(Void... arg0) {
 			try {
-				DefaultHttpClient httpclient = new DefaultHttpClient();
-				HttpPut httpPut = new HttpPut("http://"
-						+ bridge.getInternalipaddress() + "/api/"
-						+ new PreferencesManager(c).getUserName().get() + "/lights/"
-						+ b.getNumber() + "/state");
-				JSONObject holder = new JSONObject();
-				holder.put("on", true);
-				if (finalSat != 420) {
-					holder.put("sat", finalSat);
-				}
-				if (finalBright != 420) {
-					holder.put("bri", finalBright);
-				}
-				if (color != 999999999) {
-					holder.put("hue", color);
-				}
-				StringEntity se = new StringEntity(holder.toString());
-				httpPut.setEntity(se);
-				httpPut.setHeader("Accept", "application/json");
-				httpPut.setHeader("Content-type", "application/json");
-				String str = EntityUtils.toString(httpclient.execute(httpPut)
-						.getEntity());
-				Log.d("REPSONSE", str);
+				DefaultHttpClient defaulthttpclient = new DefaultHttpClient();
+				HttpGet httpget = new HttpGet("http://"
+						+ bridge.getInternalipaddress() + "/api/" + userName
+						+ "/lights/" + bulb.getNumber());
+				HttpResponse httpresponse = defaulthttpclient.execute(httpget);
+				BufferedReader bufferedreader;
+				bufferedreader = new BufferedReader(new InputStreamReader(
+						httpresponse.getEntity().getContent()));
+				String content = bufferedreader.readLine();
+				Gson g = new Gson();
+				BulbState state = g.fromJson(content, BulbState.class);
+				listener.onStateFetched(state);
 			} catch (Exception e) {
-				e.printStackTrace();
+				listener.onStateUnableToBeFetched(e.getMessage());
 			}
 			return null;
 		}
 	}
 
+	
 	public class BulbStateChangerTask extends AsyncTask<Void, Void, Void> {
 		HashMap<String, Object> states;
 		Bulb b;
 		String userName;
-		Bridge bridge;
 
-		public BulbStateChangerTask(HashMap<String, Object> states, Bulb b, String userName,
-				Bridge bridge) {
+		public BulbStateChangerTask(HashMap<String, Object> states, Bulb b, String userName) {
 			super();
 			this.states = states;
 			this.b = b;
 			this.userName = userName;
-			this.bridge = bridge;
 		}
 
 		@Override
@@ -129,24 +120,11 @@ public class BulbManager {
 		Bulb b;
 		String userName;
 		String newName;
-		Bridge bridge;
 		onBulbRenamedListener listener;
-		
-		public BulbNameChangerTask(String newName, Bulb b, String userName,
-				Bridge bridge) {
-			super();
-			this.b = b;
-			this.userName = userName;
-			this.bridge = bridge;
-			this.newName = newName;
-		}
 
-		public BulbNameChangerTask(String newName, Bulb b, String userName,
-				Bridge bridge, onBulbRenamedListener listener) {
-			super();
+		public BulbNameChangerTask(String newName, Bulb b, String userName, onBulbRenamedListener listener) {
 			this.b = b;
 			this.userName = userName;
-			this.bridge = bridge;
 			this.newName = newName;
 			this.listener = listener; 
 		}
@@ -165,22 +143,22 @@ public class BulbManager {
 				httpPut.setHeader("Accept", "application/json");
 				httpPut.setHeader("Content-type", "application/json");
 				HttpResponse resp = httpclient.execute(httpPut);
-				
-				if (listener != null) {
-					String str = EntityUtils.toString(resp
-							.getEntity());
-					if (str.contains("success") &&
-							str.contains(newName)) {
-						b.setName(newName);
-						ArrayList<Bulb> bulbs = pMan.getBulbs();	
-						for (int i = 0; i < bulbs.size(); i++) {
-							if (bulbs.get(i).getNumber().equals(b.getNumber())) {
-								bulbs.remove(i);
-								bulbs.add(b);
-								break;
-							}
+
+				String str = EntityUtils.toString(resp
+						.getEntity());
+				if (str.contains("success") &&
+						str.contains(newName)) {
+					b.setName(newName);
+					ArrayList<Bulb> bulbs = pMan.getBulbs();	
+					for (int i = 0; i < bulbs.size(); i++) {
+						if (bulbs.get(i).getNumber().equals(b.getNumber())) {
+							bulbs.remove(i);
+							bulbs.add(b);
+							break;
 						}
-						pMan.storeBulbs(bulbs);
+					}
+					pMan.storeBulbs(bulbs);
+				if (listener != null) {
 						listener.onBulbRenamedSuccessfully(b, newName);
 					} else {
 						listener.onBulbRenamedUnsuccessfully();
@@ -264,13 +242,17 @@ public class BulbManager {
 
 	public interface onLightScanCompledListener {
 		public void onLightsScanCompletedSuccessfully(ArrayList<Bulb> bulbList);
-
 		public void onLightsScanCompletedUnsuccessfully(String error);
 	}
 	
 	public interface onBulbRenamedListener {
 		public void onBulbRenamedSuccessfully(Bulb b, String newName);
 		public void onBulbRenamedUnsuccessfully();
+	}
+	
+	public interface onBulbStateFetched {
+		public void onStateFetched(BulbState state);
+		public void onStateUnableToBeFetched(String error);
 	}
 
 	Context act;
@@ -299,10 +281,15 @@ public class BulbManager {
 		task.execute();
 	}
 
-	public void setLightValues(Bulb b, int color, double saturation,
-			int brightness) {
-		int finalSat;
-		int finalBright;
+	public void getLightState(Bulb b, onBulbStateFetched listener) {
+		BulbStateFetcherTask task = new BulbStateFetcherTask(b, pMan.getUserName().get(), listener);
+		task.execute();
+	}
+	
+	public void setLightValues(Bulb b, double color, double saturation,
+			double brightness) {
+		double finalSat;
+		double finalBright;
 
 		if (saturation == 420) {
 			finalSat = 420;
@@ -319,8 +306,21 @@ public class BulbManager {
 			finalBright = step2.intValue();
 		}
 
-		BulbColorChangerTask task = new BulbColorChangerTask(act, b, color,
-				finalSat, finalBright);
+		HashMap<String, Object> states = new HashMap<String, Object>();
+		states.put(StateCodes.SATURATION, finalSat);
+		states.put(StateCodes.BRIGHTNESS, finalBright);
+		states.put(StateCodes.COLOR, color);
+		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get());
+		task.execute();
+	}
+	
+	public void setLightValues(Bulb b, BulbState state) {
+
+		HashMap<String, Object> states = new HashMap<String, Object>();
+		states.put(StateCodes.SATURATION, state.getState().getSat());
+		states.put(StateCodes.BRIGHTNESS, state.getState().getBri());
+		states.put(StateCodes.COLOR, state.getState().getHue());
+		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get());
 		task.execute();
 	}
 
@@ -328,15 +328,14 @@ public class BulbManager {
 		HashMap<String, Object> states = new HashMap<String, Object>();
 		states.put("on", false);
 		BulbStateChangerTask task = new BulbStateChangerTask(states, b,
-				pMan.getUserName().get(), bridge);
+				pMan.getUserName().get());
 		task.execute();
 	}
 
 	public void turnOn(Bulb b) {
 		HashMap<String, Object> states = new HashMap<String, Object>();
 		states.put("on", true);
-		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get(),
-				bridge);
+		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get());
 		task.execute();
 	}
 
@@ -344,20 +343,17 @@ public class BulbManager {
 		HashMap<String, Object> states = new HashMap<String, Object>();
 		states.put("on", true);
 		states.put("alert", alertType);
-		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get(),
-				bridge);
+		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get());
 		task.execute();
 	}
 
 	public void rename(Bulb b, String name) {
-		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName().get(),
-				bridge);
+		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName().get(), null);
 		task.execute();		
 	}
 	
 	public void rename(Bulb b, String name, onBulbRenamedListener listener) {
-		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName().get(),
-				bridge, listener);
+		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName().get(), listener);
 		task.execute();		
 	}
 
