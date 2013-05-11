@@ -55,7 +55,7 @@ public class BulbManager {
 				DefaultHttpClient httpclient = new DefaultHttpClient();
 				HttpPut httpPut = new HttpPut("http://"
 						+ bridge.getInternalipaddress() + "/api/"
-						+ new PreferencesManager(c).getUserName() + "/lights/"
+						+ new PreferencesManager(c).getUserName().get() + "/lights/"
 						+ b.getNumber() + "/state");
 				JSONObject holder = new JSONObject();
 				holder.put("on", true);
@@ -294,7 +294,7 @@ public class BulbManager {
 		progress_dialog.setCancelable(false);
 		progress_dialog.show();
 		GetLightsListTask task = new GetLightsListTask(bridge,
-				new PreferencesManager(act).getUserName(), listener,
+				new PreferencesManager(act).getUserName().get(), listener,
 				progress_dialog);
 		task.execute();
 	}
@@ -328,14 +328,14 @@ public class BulbManager {
 		HashMap<String, Object> states = new HashMap<String, Object>();
 		states.put("on", false);
 		BulbStateChangerTask task = new BulbStateChangerTask(states, b,
-				pMan.getUserName(), bridge);
+				pMan.getUserName().get(), bridge);
 		task.execute();
 	}
 
 	public void turnOn(Bulb b) {
 		HashMap<String, Object> states = new HashMap<String, Object>();
 		states.put("on", true);
-		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName(),
+		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get(),
 				bridge);
 		task.execute();
 	}
@@ -344,19 +344,19 @@ public class BulbManager {
 		HashMap<String, Object> states = new HashMap<String, Object>();
 		states.put("on", true);
 		states.put("alert", alertType);
-		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName(),
+		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get(),
 				bridge);
 		task.execute();
 	}
 
 	public void rename(Bulb b, String name) {
-		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName(),
+		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName().get(),
 				bridge);
 		task.execute();		
 	}
 	
 	public void rename(Bulb b, String name, onBulbRenamedListener listener) {
-		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName(),
+		BulbNameChangerTask task = new BulbNameChangerTask(name, b, pMan.getUserName().get(),
 				bridge, listener);
 		task.execute();		
 	}

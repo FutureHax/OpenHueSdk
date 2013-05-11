@@ -12,6 +12,27 @@ import com.t3hh4xx0r.openhuesdk.sdk.objects.Bulb;
 
 public class PreferencesManager {
 
+	public class UserName {
+		String name;
+
+		public UserName(String name) {
+			this.name = name;
+		}
+
+		public String get() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public boolean isSet() {
+			return get().equals("OpenHueSDKExample");
+		}
+		
+	}
+
 	Context c;
 
 	public PreferencesManager(Context c) {
@@ -44,9 +65,9 @@ public class PreferencesManager {
 		return res;
 	}
 
-	public String getUserName() {
-		return PreferenceManager.getDefaultSharedPreferences(c).getString(
-				"userName", "OpenHueSDKExample");
+	public UserName getUserName() {
+		return new UserName(PreferenceManager.getDefaultSharedPreferences(c).getString(
+				"userName", "OpenHueSDKExample"));
 	}
 
 	public void setUserName(String userName) {

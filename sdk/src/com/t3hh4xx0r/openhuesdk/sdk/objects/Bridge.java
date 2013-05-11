@@ -106,7 +106,7 @@ public class Bridge implements Serializable {
 						+ b.getInternalipaddress() + "/api/");
 				Gson localGson = new Gson();
 				RegistrationRequest localRegistrationRequest = new RegistrationRequest(
-						Utils.getDeviceType(c).getType(), pMan.getUserName());
+						Utils.getDeviceType(c).getType(), pMan.getUserName().get());
 
 				localHttpPost.setEntity(new StringEntity(localGson
 						.toJson(localRegistrationRequest)));

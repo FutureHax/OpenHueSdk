@@ -98,8 +98,7 @@ public class MainActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		pMan = new PreferencesManager(this);
-		pMan.setUserName("HueOpenSDKExample");
-		reg = new BridgeRegistrar(this, pMan.getUserName());
+		reg = new BridgeRegistrar(this, pMan.getUserName().get());
 		findAndWatch();
 		setVisibilities();
 	}
