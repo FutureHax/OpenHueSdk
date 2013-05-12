@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Bulb implements Serializable {
 
 	private static final long serialVersionUID = 6575352713587090023L;
-	
+	BulbState state;
 	String name;
 	String number;
 
@@ -25,11 +25,18 @@ public class Bulb implements Serializable {
 		this.number = number;
 	}
 
+	public BulbState getState() {
+		return state;
+	}
+
+	public void setState(BulbState state) {
+		this.state = state;
+	}
+
 	@Override
 	public String toString() {
 		return "Bulb [getName()=" + getName() + ", getNumber()=" + getNumber()
-				+ "]";
+				+ ", getState()=" + getState() + "]";
 	}
-
 
 }

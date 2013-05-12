@@ -88,6 +88,12 @@ public class MainActivity extends SherlockActivity {
 								});
 
 							}
+
+							@Override
+							public void onWifiNotAvailable() {
+								// TODO Auto-generated method stub
+								
+							}
 						});
 			}
 		});

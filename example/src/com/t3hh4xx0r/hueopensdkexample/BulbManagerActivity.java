@@ -186,7 +186,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 				public void onClick(final View v) {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(
 							v.getContext());
-					bulbMan.alert(b, BulbManager.AlertCodes.lSELECT);
+					bulbMan.alert(b, BulbManager.AlertCodes.lSELECT.getValue());
 					builder.setCancelable(true);
 					builder.setTitle("Rename " + b.getName());
 					builder.setMessage("Enter a new name below.");
@@ -235,8 +235,14 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 															.setNavItems(bulbNames, pos);
 													
 												}
+
+												@Override
+												public void onWifiNotAvailable() {
+													// TODO Auto-generated method stub
+													
+												}
 											});
-									bulbMan.alert(b, BulbManager.AlertCodes.NONE);
+									bulbMan.alert(b, BulbManager.AlertCodes.NONE.getValue());
 									d.dismiss();
 								}
 							});
@@ -245,7 +251,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 				}
 			});
 
-			bulbMan.alert(b, BulbManager.AlertCodes.SELECT);
+			bulbMan.alert(b, BulbManager.AlertCodes.SELECT.getValue());
 			return rootView;
 		}
 	}

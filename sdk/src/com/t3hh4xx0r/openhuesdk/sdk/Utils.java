@@ -3,6 +3,8 @@ package com.t3hh4xx0r.openhuesdk.sdk;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 public class Utils {
 	public static class DeviceType {
@@ -33,6 +35,12 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return t;
+	}
+	
+	public static boolean isWifiConnected(Context c) {
+		ConnectivityManager connManager = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		return mWifi.isConnected();
 	}
 
 }

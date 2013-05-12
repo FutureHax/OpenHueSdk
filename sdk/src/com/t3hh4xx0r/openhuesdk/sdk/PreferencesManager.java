@@ -9,6 +9,7 @@ import android.preference.PreferenceManager;
 
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bulb;
+import com.t3hh4xx0r.openhuesdk.sdk.objects.BulbState;
 
 public class PreferencesManager {
 
@@ -26,11 +27,11 @@ public class PreferencesManager {
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 		public boolean isSet() {
 			return get().equals("OpenHueSDKExample");
 		}
-		
+
 	}
 
 	Context c;
@@ -58,6 +59,7 @@ public class PreferencesManager {
 			Bulb b = new Bulb();
 			b.setName(bulbName);
 			b.setNumber((i + "").trim());
+			b.setState(buildBulbState(prefs, i));
 			if (!b.getName().equals("") && !b.getNumber().equals("")) {
 				res.add(b);
 			}
@@ -65,9 +67,34 @@ public class PreferencesManager {
 		return res;
 	}
 
+	private BulbState buildBulbState(SharedPreferences prefs, int i) {
+		BulbState bState = new BulbState();
+		BulbState.State state = bState.new State();
+		
+		state.setAlert(prefs.getString("bulb_" + i + "_bulbState_state_Alert", "none"));
+		state.setColormode(prefs.getString("bulb_" + i + "_bulbState_state_ColorMode", "none"));
+		state.setEffect(prefs.getString("bulb_" + i + "_bulbState_state_Effect", "none"));
+
+		state.setBri(prefs.getInt("bulb_" + i + "_bulbState_state_Bri", 0));
+		state.setHue(prefs.getInt("bulb_" + i + "_bulbState_state_Hue", 0));
+		state.setSat(prefs.getInt("bulb_" + i + "_bulbState_state_Sat", 0));
+		state.setCt(prefs.getInt("bulb_" + i + "_bulbState_state_CT", 0));
+		
+		state.setOn(prefs.getBoolean("bulb_" + i + "_bulbState_state_On", false));
+		state.setReachable(prefs.getBoolean("bulb_" + i + "_bulbState_state_Reachable", false));
+		
+		bState.setName(prefs.getString("bulb_" + i, "none"));
+		bState.setType(prefs.getString("bulb_" + i + "_bulbState_Type", "none"));
+		bState.setModelid(prefs.getString("bulb_" + i + "_bulbState_ModelId", "none"));
+		bState.setSwversion(prefs.getString("bulb_" + i + "_bulbState_SWVersion", "none"));
+		bState.setState(state);
+		
+		return bState;
+	}
+
 	public UserName getUserName() {
-		return new UserName(PreferenceManager.getDefaultSharedPreferences(c).getString(
-				"userName", "OpenHueSDKExample"));
+		return new UserName(PreferenceManager.getDefaultSharedPreferences(c)
+				.getString("userName", "OpenHueSDKExample"));
 	}
 
 	public void setUserName(String userName) {
@@ -88,9 +115,45 @@ public class PreferencesManager {
 		Editor e = PreferenceManager.getDefaultSharedPreferences(c).edit();
 		e.putInt("bulbCount", bulbs.size());
 		for (int i = 0; i < bulbs.size(); i++) {
-			e.putString("bulb_" + bulbs.get(i).getNumber().trim(), bulbs.get(i)
+			Bulb b = bulbs.get(i);
+			e.putString("bulb_" + b.getNumber().trim(), b
 					.getName());
+			
+			e.putBoolean("bulb_" + b.getNumber().trim() + "_bulbState_state_On", b
+					.getState().getState().isOn());
+			e.putBoolean("bulb_" + b.getNumber().trim() + "_bulbState_state_Reachable", b
+					.getState().getState().isReachable());
+			
+			e.putString("bulb_" + b.getNumber().trim() + "_bulbState_state_Alert", b
+					.getState().getState().getAlert());
+			e.putString("bulb_" + b.getNumber().trim() + "_bulbState_state_ColorMode", b
+					.getState().getState().getColormode());
+			e.putString("bulb_" + b.getNumber().trim() + "_bulbState_state_Effect", b
+					.getState().getState().getEffect());
+			
+			e.putInt("bulb_" + b.getNumber().trim() + "_bulbState_state_Bri", (int) b
+					.getState().getState().getBri());
+			e.putInt("bulb_" + b.getNumber().trim() + "_bulbState_state_Hue", (int) b
+					.getState().getState().getHue());
+			e.putInt("bulb_" + b.getNumber().trim() + "_bulbState_state_Sat", (int) b
+					.getState().getState().getSat());	
+			e.putInt("bulb_" + b.getNumber().trim() + "_bulbState_state_CT", (int) b
+					.getState().getState().getCt());	
+			
+			e.putString("bulb_" + b.getNumber().trim() + "_bulbState_Type", b
+					.getState().getType());
+			e.putString("bulb_" + b.getNumber().trim() + "_bulbState_ModelId", b
+					.getState().getModelid());
+			e.putString("bulb_" + b.getNumber().trim() + "_bulbState_SWVersion", b
+					.getState().getSwversion());
+					
 		}
+		e.apply();
+	}
+
+	public void updateBulb(Bulb b) {
+		Editor e = PreferenceManager.getDefaultSharedPreferences(c).edit();
+		e.putString("bulb_" + b.getNumber().trim(), b.getName());
 		e.apply();
 	}
 }

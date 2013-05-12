@@ -12,13 +12,7 @@ import org.apache.http.util.EntityUtils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.text.Layout;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -26,10 +20,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.t3hh4xx0r.openhuesdk.R;
 import com.t3hh4xx0r.openhuesdk.sdk.CountDownTimer;
 import com.t3hh4xx0r.openhuesdk.sdk.NumberToWords;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
+import com.t3hh4xx0r.openhuesdk.sdk.Utils;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils.DeviceType;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.RegistrationRequest;
@@ -68,7 +62,7 @@ public class BridgeRegistrar {
 		protected void onPostExecute(Bridge b) {
 			super.onPostExecute(b);
 			if (b == null) {
-				if (!isWifiConnected(act)) {
+				if (!Utils.isWifiConnected(act)) {
 					listener.bridgeNotReady("Please connect to wifi and try again.");
 				} else {
 					listener.bridgeNotReady("Unable to find Hue Bridge. Please be sure it is plugged in and connected to the same network as your device.");
@@ -258,11 +252,5 @@ public class BridgeRegistrar {
 		p.setIndeterminate(false);
 		root.addView(p, lp);
 		return root;
-	}
-
-	public boolean isWifiConnected(Context c) {
-		ConnectivityManager connManager = (ConnectivityManager) c.getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		return mWifi.isConnected();
 	}
 }
