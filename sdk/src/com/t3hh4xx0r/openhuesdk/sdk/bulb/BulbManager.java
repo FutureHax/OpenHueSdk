@@ -38,6 +38,8 @@ public class BulbManager {
 	
 	public class StateCodes {
 		public static final String BRIGHTNESS = "bri";
+		public static final String ALERT = "alert";
+		public static final String ON = "on";
 		public static final String COLOR = "hue";
 		public static final String SATURATION = "color";
 	}
@@ -326,7 +328,7 @@ public class BulbManager {
 
 	public void turnOff(Bulb b) {
 		HashMap<String, Object> states = new HashMap<String, Object>();
-		states.put("on", false);
+		states.put(StateCodes.ON, false);
 		BulbStateChangerTask task = new BulbStateChangerTask(states, b,
 				pMan.getUserName().get());
 		task.execute();
@@ -334,15 +336,15 @@ public class BulbManager {
 
 	public void turnOn(Bulb b) {
 		HashMap<String, Object> states = new HashMap<String, Object>();
-		states.put("on", true);
+		states.put(StateCodes.ON, true);
 		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get());
 		task.execute();
 	}
 
 	public void alert(Bulb b, String alertType) {
 		HashMap<String, Object> states = new HashMap<String, Object>();
-		states.put("on", true);
-		states.put("alert", alertType);
+		states.put(StateCodes.ON, true);
+		states.put(StateCodes.ALERT, alertType);
 		BulbStateChangerTask task = new BulbStateChangerTask(states, b, pMan.getUserName().get());
 		task.execute();
 	}
