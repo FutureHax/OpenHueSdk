@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">OpenHueBase</string>
+    <string name="hello_world">Ready to do stuff, at this point you should have the bridge object, should be registered with the bridge, and you should have a list of the bulbs accessible via new PreferencesManager(Context, Bridge).getBulbs()</string>
+
+</resources>
