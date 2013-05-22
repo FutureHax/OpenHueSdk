@@ -25,6 +25,9 @@ import com.t3hh4xx0r.openhuesdk.sdk.NumberToWords;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils.DeviceType;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnBridgeRegisteredListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnBridgeReturnedListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnPushLinkButtonPressedListener;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.RegistrationRequest;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.RegistrationResponse;
@@ -122,24 +125,6 @@ public class BridgeRegistrar {
 			super.onPostExecute(result);
 		}
 
-	}
-
-	public interface OnBridgeRegisteredListener {
-		public void bridgeNotReady(String errorMessage);
-
-		public void bridgeReady();
-	}
-
-	public interface OnBridgeReturnedListener {
-		public void bridgeNotReady(String errorMessage);
-
-		public void bridgeReady(Bridge b);
-	}
-
-	private interface OnPushLinkButtonPressedListener {
-		public void bridgeNotReady(String errorMessage);
-
-		public void bridgeReady();
 	}
 
 	Activity act;

@@ -1,8 +1,7 @@
 package com.t3hh4xx0r.openhuebase;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
+import android.os.Bundle;
 
 public class MainActivity extends Activity {
 

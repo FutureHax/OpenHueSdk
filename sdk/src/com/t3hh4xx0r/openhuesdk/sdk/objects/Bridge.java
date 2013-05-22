@@ -15,7 +15,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils;
-import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar.OnBridgeReturnedListener;
 
 public class Bridge implements Serializable {
 	private static final long serialVersionUID = 8274809280967198013L;

@@ -12,12 +12,11 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils;
 import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar;
-import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar.OnBridgeRegisteredListener;
-import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar.OnBridgeReturnedListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnBridgeRegisteredListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnBridgeReturnedListener;
 import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager;
-import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager.onLightScanCompledListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bulb.IBulbManager.onLightScanCompledListener;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
-import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge.bridgeValidityListener;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bulb;
 
 public class MainActivity extends SherlockActivity {
@@ -76,7 +75,7 @@ public class MainActivity extends SherlockActivity {
 
 							@Override
 							public void onLightsScanCompletedUnsuccessfully(
-									final String error) {
+									final String error, boolean couldHaveMoved) {
 								MainActivity.this.runOnUiThread(new Runnable() {
 									public void run() {
 										Toast.makeText(

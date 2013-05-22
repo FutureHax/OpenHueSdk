@@ -11,31 +11,25 @@
     <Button
         android:id="@+id/rename"
         style="@style/DashboardButton"
-        android:text="Rename Bulb" />
+        android:text="Rename" />
 
    <Button
         android:id="@+id/on"
         style="@style/DashboardButton"
-        android:text="Turn bulb on" />    
+        android:text="On" />    
 
     <Button
         android:id="@+id/off"
         style="@style/DashboardButton"
-        android:text="Turn bulb off" />
+        android:text="Off" />
 
     <Button
-        android:id="@+id/color_picker_sb"
+        android:id="@+id/color_pickers"
         style="@style/DashboardButton"
-        android:text="Color picker/w saturation and brightness" />
+        android:text="Color pickers" />
 
     <Button
-        android:id="@+id/color_picker_s"
+        android:id="@+id/alerts"
         style="@style/DashboardButton"
-        android:text="Color picker/w saturation" />
-
-    <Button
-        android:id="@+id/color_picker_b"
-        style="@style/DashboardButton"
-        android:text="Color picker/w brightness" />
-
+        android:text="Alert" />
 </com.t3hh4xx0r.hueopensdkexample.DashboardLayout>

@@ -25,8 +25,10 @@ import com.actionbarsherlock.view.Menu;
 import com.t3hh4xx0r.openhuesdk.sdk.ColorPickerView;
 import com.t3hh4xx0r.openhuesdk.sdk.ColorPickerView.OnColorChangedListener;
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
+import com.t3hh4xx0r.openhuesdk.sdk.bulb.AlertCodes;
 import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager;
-import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager.onBulbRenamedListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bulb.CustomAlert;
+import com.t3hh4xx0r.openhuesdk.sdk.bulb.IBulbManager.*;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bulb;
 
@@ -50,131 +52,57 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 			on.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					bulbMan.turnOn(b);
+					bulbMan.turnOn(b, null);
 				}
 			});
 			View off = rootView.findViewById(R.id.off);
 			off.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					bulbMan.turnOff(b);
+					bulbMan.turnOff(b, null);
 				}
 			});
 
-			View colorPickersb = rootView.findViewById(R.id.color_picker_sb);
-			colorPickersb.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					final AlertDialog.Builder builder = new AlertDialog.Builder(
-							v.getContext());
-					builder.setCancelable(true);
-
-					LayoutInflater inflate = LayoutInflater.from(v.getContext());
-					View colorViewsb = inflate.inflate(
-							R.layout.color_picker_popup_sb, null);
-					final ColorPickerView pickersb = (ColorPickerView) colorViewsb
-							.findViewById(R.id.picker);
-					final SeekBar satBar = (SeekBar) colorViewsb
-							.findViewById(R.id.saturation);
-					final SeekBar brightBar = (SeekBar) colorViewsb
-							.findViewById(R.id.brightness);
-
-					pickersb.setOnColorChangedListener(new OnColorChangedListener() {
-						@Override
-						public void colorChanged(int color, int hue) {
-							bulbMan.setLightValues(b, hue,
-									satBar.getProgress(),
-									brightBar.getProgress());
-						}
-					});
-					builder.setView(colorViewsb);
-					builder.setPositiveButton("Done!",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface d, int arg1) {
-									bulbMan.setLightValues(b,
-											pickersb.getHue(),
-											satBar.getProgress(),
-											brightBar.getProgress());
-									d.dismiss();
-								}
-							});
-					final Dialog d = builder.create();
-					d.show();
-				}
-			});
-
-			View colorPickers = rootView.findViewById(R.id.color_picker_s);
+			View colorPickers = rootView.findViewById(R.id.color_pickers);
 			colorPickers.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(
 							v.getContext());
 					builder.setCancelable(true);
-
-					LayoutInflater inflate = LayoutInflater.from(v.getContext());
-					View colorViews = inflate.inflate(
-							R.layout.color_picker_popup_s, null);
-					final ColorPickerView pickers = (ColorPickerView) colorViews
-							.findViewById(R.id.picker);
-					final SeekBar satBar = (SeekBar) colorViews
-							.findViewById(R.id.saturation);
-
-					pickers.setOnColorChangedListener(new OnColorChangedListener() {
+					builder.setItems(new String[] {
+							"Picker w/Saturation",
+							"Picker w/Brightness",
+							"Picker w/Brightness & Saturation"}, new DialogInterface.OnClickListener() {						
 						@Override
-						public void colorChanged(int color, int hue) {
-							bulbMan.setLightValues(b, hue,
-									satBar.getProgress(), 420);
+						public void onClick(DialogInterface d, int pos) {
+							d.dismiss();
+							showColorPicker(pos, v.getContext(), bulbMan, b);						
 						}
 					});
-					builder.setView(colorViews);
-					builder.setPositiveButton("Done!",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface d, int arg1) {
-									bulbMan.setLightValues(b, pickers.getHue(),
-											satBar.getProgress(), 420);
-									d.dismiss();
-								}
-							});
 					final Dialog d = builder.create();
 					d.show();
 				}
 			});
 
-			View colorPickerb = rootView.findViewById(R.id.color_picker_b);
-			colorPickerb.setOnClickListener(new OnClickListener() {
+			View alerts = rootView.findViewById(R.id.alerts);
+			alerts.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(final View v) {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(
 							v.getContext());
 					builder.setCancelable(true);
-
-					LayoutInflater inflate = LayoutInflater.from(v.getContext());
-					View colorViewb = inflate.inflate(
-							R.layout.color_picker_popup_b, null);
-					final ColorPickerView pickerb = (ColorPickerView) colorViewb
-							.findViewById(R.id.picker);
-					final SeekBar brightBar = (SeekBar) colorViewb
-							.findViewById(R.id.brightness);
-
-					pickerb.setOnColorChangedListener(new OnColorChangedListener() {
+					builder.setItems(new String[] {
+							"Alert",
+							"Long Alert",
+							"None", 
+							"Custom"}, new DialogInterface.OnClickListener() {						
 						@Override
-						public void colorChanged(int color, int hue) {
-							bulbMan.setLightValues(b, hue, 420,
-									brightBar.getProgress());
+						public void onClick(DialogInterface d, int pos) {
+							d.dismiss();
+							doAlert(pos, v.getContext(), bulbMan, b);						
 						}
 					});
-					builder.setView(colorViewb);
-					builder.setPositiveButton("Done!",
-							new DialogInterface.OnClickListener() {
-								@Override
-								public void onClick(DialogInterface d, int arg1) {
-									bulbMan.setLightValues(b, pickerb.getHue(),
-											420, brightBar.getProgress());
-									d.dismiss();
-								}
-							});
 					final Dialog d = builder.create();
 					d.show();
 				}
@@ -186,7 +114,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 				public void onClick(final View v) {
 					final AlertDialog.Builder builder = new AlertDialog.Builder(
 							v.getContext());
-					bulbMan.alert(b, BulbManager.AlertCodes.lSELECT.getValue());
+					bulbMan.alert(b, AlertCodes.lSELECT);
 					builder.setCancelable(true);
 					builder.setTitle("Rename " + b.getName());
 					builder.setMessage("Enter a new name below.");
@@ -242,7 +170,7 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 													
 												}
 											});
-									bulbMan.alert(b, BulbManager.AlertCodes.NONE.getValue());
+									bulbMan.alert(b, AlertCodes.NONE);
 									d.dismiss();
 								}
 							});
@@ -251,9 +179,95 @@ public class BulbManagerActivity extends SherlockFragmentActivity implements
 				}
 			});
 
-			bulbMan.alert(b, BulbManager.AlertCodes.SELECT.getValue());
+			bulbMan.alert(b, AlertCodes.SELECT);
 			return rootView;
 		}
+	}
+	
+	private static void doAlert(int pos, Context c,
+			final BulbManager bulbMan, final Bulb b) {
+		if (pos == 0) {
+			bulbMan.alert(b, AlertCodes.SELECT);
+		} else if (pos == 1) {
+			bulbMan.alert(b, AlertCodes.lSELECT);
+		} else if (pos == 2) {
+			bulbMan.alert(b, AlertCodes.NONE);
+		} else if (pos == 3) {
+			final CustomAlert alert = new CustomAlert();
+			alert.setLength(1000);
+			final AlertDialog.Builder builder = new AlertDialog.Builder(c);
+			builder.setCancelable(true);
+			LayoutInflater inflate = LayoutInflater.from(c);
+			View colorViews = inflate.inflate(
+					R.layout.color_picker_popup_sb, null);
+			final ColorPickerView pickers = (ColorPickerView) colorViews
+					.findViewById(R.id.picker);
+			final SeekBar satBar = (SeekBar) colorViews
+					.findViewById(R.id.saturation);
+			final SeekBar brightBar = (SeekBar) colorViews
+					.findViewById(R.id.brightness);
+			
+			builder.setView(colorViews);
+			builder.setPositiveButton("Done!",
+					new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface d, int arg1) {
+							alert.setBrightness(((brightBar == null) ? 420 : brightBar.getProgress()));
+							alert.setColor( pickers.getHue());
+							alert.setSat(((satBar == null) ? 420 : satBar.getProgress()));
+							alert.setCycleCount(5);
+							d.dismiss();
+							bulbMan.customAlert(b, alert);
+						}
+					});
+			final Dialog d = builder.create();
+			d.show();	
+		}
+		
+	}
+	
+	private static void showColorPicker(int pos, Context c, final BulbManager bulbMan, final Bulb b) {
+		final AlertDialog.Builder builder = new AlertDialog.Builder(c);
+		builder.setCancelable(true);
+		int layout;
+		if (pos == 0) {
+			layout = R.layout.color_picker_popup_s;
+		} else if (pos == 1)  {
+			layout = R.layout.color_picker_popup_b;
+		} else {
+			layout = R.layout.color_picker_popup_sb;
+
+		}
+		LayoutInflater inflate = LayoutInflater.from(c);
+		View colorViews = inflate.inflate(
+				layout, null);
+		final ColorPickerView pickers = (ColorPickerView) colorViews
+				.findViewById(R.id.picker);
+		final SeekBar satBar = (SeekBar) colorViews
+				.findViewById(R.id.saturation);
+		final SeekBar brightBar = (SeekBar) colorViews
+				.findViewById(R.id.brightness);
+		
+		pickers.setOnColorChangedListener(new OnColorChangedListener() {
+			@Override
+			public void colorChanged(int color, int hue) {
+				bulbMan.setLightValues(b, hue,((satBar == null) ? 420 : satBar.getProgress()), 
+						((brightBar == null) ? 420 : brightBar.getProgress()), null);
+			}
+		});
+		builder.setView(colorViews);
+		builder.setPositiveButton("Done!",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface d, int arg1) {
+						bulbMan.setLightValues(b, pickers.getHue(),
+								((satBar == null) ? 420 : satBar.getProgress()), 
+								((brightBar == null) ? 420 : brightBar.getProgress()), null);
+						d.dismiss();
+					}
+				});
+		final Dialog d = builder.create();
+		d.show();		
 	}
 
 	ArrayList<Bulb> bulbs;

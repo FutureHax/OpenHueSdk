@@ -8,18 +8,15 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.provider.Settings.SettingNotFoundException;
-import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.t3hh4xx0r.openhuesdk.sdk.PreferencesManager;
 import com.t3hh4xx0r.openhuesdk.sdk.Utils;
 import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar;
-import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar.OnBridgeRegisteredListener;
-import com.t3hh4xx0r.openhuesdk.sdk.bridge.BridgeRegistrar.OnBridgeReturnedListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnBridgeRegisteredListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bridge.IBridgeRegistrar.OnBridgeReturnedListener;
 import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager;
-import com.t3hh4xx0r.openhuesdk.sdk.bulb.BulbManager.onLightScanCompledListener;
+import com.t3hh4xx0r.openhuesdk.sdk.bulb.IBulbManager.onLightScanCompledListener;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bridge;
 import com.t3hh4xx0r.openhuesdk.sdk.objects.Bulb;
 
