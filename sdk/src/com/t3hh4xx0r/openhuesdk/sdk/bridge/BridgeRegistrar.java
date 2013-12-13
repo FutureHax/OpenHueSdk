@@ -13,6 +13,7 @@ import org.apache.http.util.EntityUtils;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
@@ -53,6 +54,7 @@ public class BridgeRegistrar {
 				bufferedreader = new BufferedReader(new InputStreamReader(
 						httpresponse.getEntity().getContent()));
 				String content = bufferedreader.readLine();
+				Log.d("CONTENT", content);
 				Gson gson = new Gson();
 				b = gson.fromJson(content, Bridge[].class)[0];
 			} catch (Exception e) {
@@ -167,7 +169,7 @@ public class BridgeRegistrar {
 				try {
 					diag.cancel();
 				} catch (IllegalArgumentException e) {
-
+					e.printStackTrace();
 				}
 				count = 0;
 				if (!finished) {
@@ -193,7 +195,7 @@ public class BridgeRegistrar {
 					try {
 						diag.dismiss();
 					} catch (IllegalArgumentException e) {
-						
+						e.printStackTrace();
 					}
 					listener.bridgeReady();
 				} else {

@@ -93,7 +93,8 @@ public class BulbManager {
 								JSONObject obj = (JSONObject) json.get(key);
 								b.setName(obj.getString("name"));
 								b.setNumber(key);
-
+								b.setRawJSON(obj);
+								
 								DefaultHttpClient defaulthttpclient = new DefaultHttpClient();
 								HttpGet httpget = new HttpGet("http://"
 										+ bridge.getInternalipaddress()
@@ -200,6 +201,8 @@ public class BulbManager {
 				String str = EntityUtils.toString(resp.getEntity());
 				if (str.contains("success") && str.contains(newName)) {
 					b.setName(newName);
+					b.getRawJSON().put("name", newName);
+					
 					ArrayList<Bulb> bulbs = pMan.getBulbs();
 					for (int i = 0; i < bulbs.size(); i++) {
 						if (bulbs.get(i).getNumber().equals(b.getNumber())) {
@@ -262,6 +265,7 @@ public class BulbManager {
 				httpPut.setHeader("Content-type", "application/json");
 				String str = EntityUtils.toString(httpclient.execute(httpPut)
 						.getEntity());
+				Log.d("STR RESUT", str);
 				new BulbStateFetcherTask(b, userName,
 						new onBulbStateFetchedListener() {
 							@Override
@@ -412,6 +416,7 @@ public class BulbManager {
 				timer.start();
 			}
 		});
+//		setLightValues(b, alert.getColor(), alert.getSat(), alert.getBrightness(), null);
 	}
 	
 	public Bridge getBridge() {
