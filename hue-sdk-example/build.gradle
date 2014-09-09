@@ -1,0 +1,23 @@
+apply plugin: 'com.android.application'
+
+dependencies {
+    compile 'com.android.support:support-v4:19.0+'
+    compile project(':hue-sdk')
+//        compile 'com.t3hh4xx0r:open-hue-sdk:0.0.1-SNAPSHOT@aar'
+
+}
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 19
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+}
